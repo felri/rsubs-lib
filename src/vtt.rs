@@ -153,10 +153,12 @@ impl VTTFile {
             ssa.styles.push(styl)
         }
         for (_ctr, i) in self.lines.into_iter().enumerate() {
+            let vmargin = i.position.map_or(0.0, |p| p.line as f32);
             let mut line = SSAEvent {
                 line_end: i.line_end,
                 line_start: i.line_start,
                 line_text: i.line_text.clone(),
+                vmargin,
                 ..Default::default()
             };
             line.line_text = replace_invalid_lines(&i.line_text, false).replace("\\N", "\r\n");
@@ -424,20 +426,40 @@ impl FromStr for VTTFile {
                     });
                     for (px, py) in poss {
                         if px == "position" {
-                            let pos_split = py.replace('%', "").split(',').map(|s| s.to_owned()).collect::<Vec<String>>();
-                            spos.pos = pos_split.first().unwrap_or(&"".to_string()).to_string().parse::<i32>().expect("number");
+                            let pos_split = py
+                                .replace('%', "")
+                                .split(',')
+                                .map(|s| s.to_owned())
+                                .collect::<Vec<String>>();
+                            spos.pos = pos_split
+                                .first()
+                                .unwrap_or(&"".to_string())
+                                .to_string()
+                                .parse::<i32>()
+                                .expect("number");
                             if pos_split.len() > 1 {
-                                spos.pos_align = Some(pos_split.get(1).unwrap_or(&"".to_string()).to_string());
+                                spos.pos_align =
+                                    Some(pos_split.get(1).unwrap_or(&"".to_string()).to_string());
                             }
                         } else if px == "align" {
                             spos.align = py;
                         } else if px == "size" {
                             spos.size = py.replace('%', "").parse::<i32>().expect("number");
                         } else if px == "line" {
-                            let line_split = py.replace('%', "").split(',').map(|s| s.to_owned()).collect::<Vec<String>>();
-                            spos.line = line_split.first().unwrap_or(&"".to_string()).to_string().parse::<i32>().expect("number");
+                            let line_split = py
+                                .replace('%', "")
+                                .split(',')
+                                .map(|s| s.to_owned())
+                                .collect::<Vec<String>>();
+                            spos.line = line_split
+                                .first()
+                                .unwrap_or(&"".to_string())
+                                .to_string()
+                                .parse::<i32>()
+                                .expect("number");
                             if line_split.len() > 1 {
-                                spos.line_align = Some(line_split.get(1).unwrap_or(&"".to_string()).to_string());
+                                spos.line_align =
+                                    Some(line_split.get(1).unwrap_or(&"".to_string()).to_string());
                             }
                         }
                     }
@@ -627,29 +649,51 @@ pub fn parse(path_or_content: String) -> Result<VTTFile, std::io::Error> {
                 });
                 for (px, py) in poss {
                     if px == "position" {
-                        let pos_split = py.replace('%', "").split(',').map(|s| s.to_owned()).collect::<Vec<String>>();
-                        spos.pos = pos_split.first().unwrap_or(&"".to_string()).to_string().parse::<i32>().expect("number");
+                        let pos_split = py
+                            .replace('%', "")
+                            .split(',')
+                            .map(|s| s.to_owned())
+                            .collect::<Vec<String>>();
+                        spos.pos = pos_split
+                            .first()
+                            .unwrap_or(&"".to_string())
+                            .to_string()
+                            .parse::<i32>()
+                            .expect("number");
                         if pos_split.len() > 1 {
-                            spos.pos_align = Some(pos_split.get(1).unwrap_or(&"".to_string()).to_string());
+                            spos.pos_align =
+                                Some(pos_split.get(1).unwrap_or(&"".to_string()).to_string());
                         }
                     } else if px == "align" {
                         spos.align = py;
                     } else if px == "size" {
                         spos.size = py.replace('%', "").parse::<i32>().expect("number");
                     } else if px == "line" {
-                        let line_split = py.replace('%', "").split(',').map(|s| s.to_owned()).collect::<Vec<String>>();
-                        spos.line = line_split.first().unwrap_or(&"".to_string()).to_string().parse::<i32>().expect("number");
+                        let line_split = py
+                            .replace('%', "")
+                            .split(',')
+                            .map(|s| s.to_owned())
+                            .collect::<Vec<String>>();
+                        spos.line = line_split
+                            .first()
+                            .unwrap_or(&"".to_string())
+                            .to_string()
+                            .parse::<i32>()
+                            .expect("number");
                         if line_split.len() > 1 {
-                            spos.line_align = Some(line_split.get(1).unwrap_or(&"".to_string()).to_string());
+                            spos.line_align =
+                                Some(line_split.get(1).unwrap_or(&"".to_string()).to_string());
                         }
                     }
                 }
                 subline.position = Some(spos);
+                println!("{:?}", subsplit);
                 subline.line_text = subsplit
                     .get((2 - idxshift)..)
                     .expect("Couldn't find text")
                     .join("\r\n")
                     .replace("\r\n", "\\N");
+                println!("{}", subline.line_text);
                 if !line_found {
                     sub.lines.clear();
                     line_found = true;

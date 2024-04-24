@@ -163,7 +163,7 @@ impl Default for SSAFile {
         default_info.insert("WrapStyle".to_string(), "0".to_string());
         default_info.insert("ScaledBorderAndShadows".to_string(), "yes".to_string());
         default_info.insert("PlayResX".to_string(), "640".to_string());
-        default_info.insert("PlayResY".to_string(), "480".to_string());
+        default_info.insert("PlayResY".to_string(), "1080".to_string());
         SSAFile {
             events: vec![SSAEvent::default()],
             styles: vec![SSAStyle::default()],
